@@ -12,6 +12,7 @@
 
     import appLayout from '@/layouts/app-layout.vue';
     import authLayout from '@/layouts/auth-layout.vue';
+    import hotelLayout from '@/layouts/hotel-layout.vue';
 
     import { useAppStore } from '@/core/store/index';
     import { useMeta } from '@/core/composables/use-meta';
@@ -24,6 +25,9 @@
     console.log('store.mainLayout', store.mainLayout);
 
     const mainLayout = computed(() => {
+         if (store.mainLayout === 'hotel') {
+            return hotelLayout; // Return the hotel layout
+        }
         return store.mainLayout === 'auth' ? authLayout : appLayout;
     });
 </script>

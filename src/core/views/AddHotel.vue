@@ -1,5 +1,5 @@
 <template>
-  <form class="space-y-5 dark:text-white">
+  <form class="space-y-5 dark:text-white w-[40vw] m-auto">
     <div class="custom-file-container" data-upload-id="myFirstImage">
       <div class="label-container">
         <label>Upload your logo </label>
@@ -15,7 +15,8 @@
         <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
         <span class="custom-file-container__custom-file__custom-file-control ltr:pr-20 rtl:pl-20"></span>
       </label>
-      <div class="custom-file-container__image-preview"></div>
+      <div class="custom-file-container__image-preview ">
+      </div>
     </div>
 
     <div>

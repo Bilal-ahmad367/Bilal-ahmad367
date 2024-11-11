@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import appSetting from '@/app-setting';
 import { useAppStore } from '@/core/store';
-import { authRoutes, appRoutes } from './routes';
+import { authRoutes, appRoutes ,hotelRoutes} from './routes';
 
-const routes: RouteRecordRaw[] = [...authRoutes, ...appRoutes];
+const routes: RouteRecordRaw[] = [...authRoutes, ...appRoutes , ...hotelRoutes];
 
 const router = createRouter({
     history: createWebHistory(),
@@ -23,7 +23,9 @@ router.beforeEach((to, from, next) => {
     
     if (to.meta.layout === 'auth') {
         store.setMainLayout('auth');
-    } else {
+    }else if( to.meta.layout === 'hotel'){
+        store.setMainLayout('hotel');
+    } else  {
         store.setMainLayout('app');
     }
     

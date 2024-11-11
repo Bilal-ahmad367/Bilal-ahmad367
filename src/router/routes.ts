@@ -51,3 +51,15 @@ export const appRoutes = [
        
     },
 ];  
+
+export const hotelRoutes = [
+    {
+        path: '/hotel-overview',
+        name: 'hotelOverview',
+        component: () => import('@/core/views/HotelOverview.vue'),
+        meta: {
+            layout: 'hotel',
+            requiresAuth: true,
+        },
+    },
+];

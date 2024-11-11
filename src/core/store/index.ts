@@ -38,8 +38,16 @@ export const useAppStore = defineStore('app', {
 
     actions: {
         setMainLayout(payload: any = null) {
-            this.mainLayout = payload; //app , auth
+            // Set layout based on provided payload
+            if (['app', 'auth', 'hotel'].includes(payload)) {
+                this.mainLayout = payload;
+            } else {
+                this.mainLayout = 'app'; // default to 'app' layout
+            }
         },
+        // setMainLayout(payload: any = null) {
+        //     this.mainLayout = payload; //app , auth
+        // },
         toggleTheme(payload: any = null) {
             payload = payload || this.theme; // light|dark|system
             localStorage.setItem('theme', payload);

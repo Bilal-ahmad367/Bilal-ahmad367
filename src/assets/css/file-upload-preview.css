@@ -94,13 +94,11 @@
     background-repeat: no-repeat;
     background-size: contain;
     border-radius: 4px;
-    height: 100px;
+    height: 50px;
     overflow: auto;
-    padding: 4px;
+    padding: 2px;
     transition: background 0.2s ease-in-out;
     width: 100%;
-    margin-top: 54px;
-    margin-bottom: 40px;
     background-color: transparent;
 }
 
