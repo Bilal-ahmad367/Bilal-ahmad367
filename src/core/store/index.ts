@@ -34,9 +34,11 @@ export const useAppStore = defineStore('app', {
         ],
         isShowMainLoader: true,
         semidark: false,
+        isAuthenticated:false
     }),
 
     actions: {
+       
         setMainLayout(payload: any = null) {
             // Set layout based on provided payload
             if (['app', 'auth', 'hotel'].includes(payload)) {

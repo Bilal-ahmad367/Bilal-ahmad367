@@ -174,11 +174,8 @@
     import { useMeta } from '@/core/composables/use-meta';
 
     import IconCaretDown from '@/core/components/icon/icon-caret-down.vue';
-    import IconMail from '@/core/components/icon/icon-mail.vue';
-    import IconLockDots from '@/core/components/icon/icon-lock-dots.vue';
     import IconInstagram from '@/core/components/icon/icon-instagram.vue';
     import IconFacebookCircle from '@/core/components/icon/icon-facebook-circle.vue';
-    import IconTwitter from '@/core/components/icon/icon-twitter.vue';
     import IconGoogle from '@/core/components/icon/icon-google.vue';
     import { Login } from '@/modules/auth/composables/useAuth';
     useMeta({ title: 'Login Cover' });

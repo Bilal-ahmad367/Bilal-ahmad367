@@ -1,8 +1,9 @@
 <template>
   <form class="space-y-5 dark:text-white w-[40vw] m-auto">
+    <!-- File Upload Section -->
     <div class="custom-file-container" data-upload-id="myFirstImage">
       <div class="label-container">
-        <label>Upload your logo </label>
+        <label>Upload your logo</label>
         <a href="javascript:;" class="custom-file-container__image-clear" title="Clear Image" @click.prevent="clearLogo">×</a>
       </div>
       <label class="custom-file-container__custom-file">
@@ -15,10 +16,10 @@
         <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
         <span class="custom-file-container__custom-file__custom-file-control ltr:pr-20 rtl:pl-20"></span>
       </label>
-      <div class="custom-file-container__image-preview ">
-      </div>
+      <div class="custom-file-container__image-preview"></div>
     </div>
 
+    <!-- Hotel Name Input -->
     <div>
       <label for="hotelName">Hotel Name</label>
       <div class="relative text-white-dark">
@@ -37,6 +38,7 @@
       <span v-if="$v.hotelName.$error" class="text-red-500 text-sm">Hotel Name is required</span>
     </div>
 
+    <!-- Location Input -->
     <div>
       <label for="location">Location</label>
       <div class="relative text-white-dark">
@@ -55,6 +57,7 @@
       <span v-if="$v.location.$error" class="text-red-500 text-sm">Location is required</span>
     </div>
 
+    <!-- Submit Button -->
     <button
       type="button"
       @click="Addhotel"
@@ -64,6 +67,8 @@
       <span v-if="loader">Loading...</span>
       <span v-else>Add hotel</span>
     </button>
+
+    <!-- Error Message -->
     <p v-if="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</p>
   </form>
 </template>
@@ -76,8 +81,9 @@ import FileUploadWithPreview from "file-upload-with-preview";
 import "file-upload-with-preview/dist/file-upload-with-preview.min.css";
 import "@/assets/css/file-upload-preview.css";
 
-    import { AddHotel } from '@/core/views/composables/useAuth.ts';
+import { AddHotel } from '@/modules/main/composables/useAuth';
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 // Fields
 const hotelName = ref("");
@@ -125,8 +131,10 @@ const clearLogo = () => {
   if (fileInput) fileInput.value = '';  // Clear the file input field
 };
 
+  const router = useRouter();
 // Add hotel function
 const Addhotel = async () => {
+  loader.value=true;
   $v.value.$touch(); // Trigger validation messages
   if ($v.value.$invalid) {
     console.warn("Validation failed.");
@@ -140,35 +148,42 @@ const Addhotel = async () => {
     formData.append("logo", logoFile.value);  // Attach the logo file if present
   }
 
-  // Log FormData contents before API call (use FormData.entries() to log data)
-  for (let pair of formData.entries()) {
-    console.log(pair[0] + ": ", pair[1]);  // Log key-value pairs
-  }
-
   // Set loading state and clear previous error message
   loader.value = true;
   errorMessage.value = null;
 
   try {
-  let  response =await AddHotel(formData);
+    // Make the API request
+    let response = await AddHotel(formData);
     console.log("API Response:", response);  // Log the API response
 
-    // Reset form
-    hotelName.value = '';
-    location.value = '';
-    logoFile.value = null;  // Clear the logo file after successful submission
+    // Handle success based on response
+      hotelName.value = '';
+      location.value = '';
+      logoFile.value = null; 
+      $v.value.$reset(); 
+      alert("Hotel added successfully!");
 
-    // Manually trigger validation to show any remaining errors
-    $v.value.$reset();  // Reset all validation state
-    alert("Hotel added successfully!");
+     router.push('/all-hotels')
+   
   } catch (err: any) {
-    errorMessage.value = err.response?.data?.message || "Request failed";
-    console.error("Submission failed:", err);
+    // Detailed error logging
+    console.error("Error:", err);
+    console.error("Error response:", err.response);
+    console.error("Error message:", err.message);
+
+    // Set error message based on the error response structure
+    if (err.response && err.response.data && err.response.data.message) {
+      errorMessage.value = err.response.data.message;
+    } else {
+      errorMessage.value = "Request failed. Please try again.";
+    }
   } finally {
     loader.value = false;  // Reset loading state
   }
-
-
-  
 };
 </script>
+
+<style scoped>
+/* Your custom styles for the component */
+</style>

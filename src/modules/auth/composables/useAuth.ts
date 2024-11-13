@@ -8,13 +8,7 @@ export const register = async (userData: any) => {
 
 
 export const Login = async (userData: any) => {
-  const token = localStorage.getItem("token"); // Or fetch from your state management
-
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "multipart/form-data", // Important for file uploads if sending FormData
-  };
-
+  
     let response: any = await request('/auth/login', 'POST', userData);
     localStorage.setItem('token', response.token);
     return response;

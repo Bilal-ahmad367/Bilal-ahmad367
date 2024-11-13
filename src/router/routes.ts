@@ -36,17 +36,26 @@ export const appRoutes = [
         meta: {
             layout: 'app',
             requiresAuth: true, // Set to true for authenticated users
-            requiredPermissions: ['view_dashboard'] // Example permission required
         },
        
     },
     {
         path: '/add-hotel',
         name: 'addhotel',
-        component: () => import('@/core/views/AddHotel.vue'),
+        component: () => import('@/modules/main/views/AddHotel.vue'),
         meta: {
             layout: 'app',
-            requiresAuth: true, // Set to true for authenticated users
+            requiresAuth: false, // Set to true for authenticated users
+        },
+       
+    },
+    {
+        path: '/all-hotels',
+        name: 'allhotels',
+        component: () => import('@/modules/main/views/allhotels.vue'),
+        meta: {
+            layout: 'app',
+            requiresAuth: false, // Set to true for authenticated users
         },
        
     },
@@ -54,12 +63,13 @@ export const appRoutes = [
 
 export const hotelRoutes = [
     {
-        path: '/hotel-overview',
-        name: 'hotelOverview',
-        component: () => import('@/core/views/HotelOverview.vue'),
+        path: '/hotel-dashboard/:hotelId',
+        name: 'HotelDashboard',
+        component: () => import('@/modules/hotel/views/HotelDashboard.vue'),
         meta: {
             layout: 'hotel',
             requiresAuth: true,
         },
+        props: true,
     },
 ];

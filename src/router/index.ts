@@ -28,12 +28,13 @@ router.beforeEach((to, from, next) => {
     } else  {
         store.setMainLayout('app');
     }
-    
-    // Authentication check
+
+     // Authentication check
     // if (to.meta.requiresAuth && !store.isAuthenticated) {
-    //     // Redirect to login if the user is not authenticated
     //     return next({ name: 'login' });
     // }
+    
+   
     
     // // Permission check
     // const requiredPermissions = to.meta.requiredPermissions;

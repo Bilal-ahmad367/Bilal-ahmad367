@@ -53,7 +53,7 @@
 
         <div class="main-container text-black dark:text-white-dark min-h-screen" :class="[store.navbar]">
             <!--  BEGIN SIDEBAR  -->
-          
+          <sidebar />
             <!--  END SIDEBAR  -->
 
             <div class="main-content flex flex-col min-h-screen">
@@ -75,8 +75,11 @@
     </div>
 </template>
 <script setup lang="ts">
+
     import { ref, onMounted } from 'vue';
-    import Header from '@/core/components/layout/Header.vue';
+
+    import sidebar from '@/core/components/layout/hotelsidebar.vue';
+    import Header from '@/core/components/layout/hotelheader.vue';
     import Footer from '@/core/components/layout/Footer.vue';
     import Setting from '@/core/components/ThemeCustomizer.vue';
     import appSetting from '@/app-setting';
