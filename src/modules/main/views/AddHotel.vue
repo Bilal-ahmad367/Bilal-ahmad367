@@ -81,7 +81,7 @@ import FileUploadWithPreview from "file-upload-with-preview";
 import "file-upload-with-preview/dist/file-upload-with-preview.min.css";
 import "@/assets/css/file-upload-preview.css";
 
-import { AddHotel } from '@/modules/main/composables/useAuth';
+import { AddHotel } from '@/modules/main/composables/useauth';
 import axios from "axios";
 import { useRouter } from "vue-router";
 

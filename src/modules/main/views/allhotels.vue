@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { getAllHotels } from '@/modules/main/composables/useAuth';
+import { getAllHotels } from '@/modules/main/composables/useauth';
 
 export default {
   name: "UserHotels",
