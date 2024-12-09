@@ -1,49 +1,38 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import appSetting from '@/app-setting';
-import { useAppStore } from '@/core/store';
-import { authRoutes, appRoutes ,hotelRoutes} from './routes';
+import { useAppStore } from '@/core/store'; // This is your Pinia store
+import { authRoutes, appRoutes, hotelRoutes } from './routes';
+import vuexStore from '@/modules/store'; // Import Vuex store for auth
 
-const routes: RouteRecordRaw[] = [...authRoutes, ...appRoutes , ...hotelRoutes];
+const routes: RouteRecordRaw[] = [...authRoutes, ...appRoutes, ...hotelRoutes];
 
 const router = createRouter({
     history: createWebHistory(),
     linkExactActiveClass: 'active',
     routes,
     scrollBehavior(to, from, savedPosition) {
-        if (savedPosition) {
-            return savedPosition;
-        } else {
-            return { left: 0, top: 0 };
-        }
+        return savedPosition ? savedPosition : { left: 0, top: 0 };
     },
 });
 
 router.beforeEach((to, from, next) => {
-    const store = useAppStore();
+    // Use Pinia for layout settings
+    const piniaStore = useAppStore();
     
     if (to.meta.layout === 'auth') {
-        store.setMainLayout('auth');
-    }else if( to.meta.layout === 'hotel'){
-        store.setMainLayout('hotel');
-    } else  {
-        store.setMainLayout('app');
+        piniaStore.setMainLayout('auth');
+    } else if (to.meta.layout === 'hotel') {
+        piniaStore.setMainLayout('hotel');
+    } else {
+        piniaStore.setMainLayout('app');
     }
 
-     // Authentication check
-    // if (to.meta.requiresAuth && !store.isAuthenticated) {
-    //     return next({ name: 'login' });
+    // // Authentication check using Vuex
+    // if (to.meta.requiresAuth && !vuexStore.getters['auth/isAuthenticated']) {
+    //     return next({ name: 'login' }); // Redirect to login if not authenticated
     // }
-    
-   
-    
-    // // Permission check
-    // const requiredPermissions = to.meta.requiredPermissions;
-    // if (requiredPermissions && !requiredPermissions.every(perm => store.userPermissions.includes(perm))) {
-    //     // Redirect to unauthorized page or dashboard if permissions are insufficient
-    //     return next({ name: 'dashboard' });
-    // }
-    
-    next();
+
+    next(); // Proceed to route if authenticated or if no auth required
 });
 
 router.afterEach(() => {

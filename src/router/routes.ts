@@ -30,12 +30,12 @@ export const authRoutes = [
 
 export const appRoutes = [
     {
-        path: '/',
+        path: '/dashboard',
         name: 'dashboard',
         component: () => import('@/core/views/Dashboard.vue'),
         meta: {
             layout: 'app',
-            requiresAuth: true, // Set to true for authenticated users
+            requiresAuth: false, // Set to true for authenticated users
         },
        
     },
@@ -68,8 +68,39 @@ export const hotelRoutes = [
         component: () => import('@/modules/hotel/views/HotelDashboard.vue'),
         meta: {
             layout: 'hotel',
-            requiresAuth: true,
+            // requiresAuth: true,
         },
         props: true,
+       
     },
+    
+        {
+            path: '/hotel-dashboard/add-item',
+            name: 'AddItem',
+            component: () => import('@/modules/hotel/views/AddItem.vue'),
+            meta: {
+                layout: 'hotel',
+                // requiresAuth: true,
+            }
+        },
+        {
+            path: '/hotel-dashboard/list-items',
+            name: 'ListItems',
+            component: () => import('@/modules/hotel/views/ListItems.vue'),
+            meta: {
+                layout: 'hotel',
+                // requiresAuth: true,
+            }
+        },
+        {
+            path: '/hotel-dashboard/orders',
+            name: 'Orders',
+            component: () => import('@/modules/hotel/views/orders.vue'),
+            meta: {
+                layout: 'hotel',
+                // requiresAuth: true,
+            }
+        }
+    
 ];
+

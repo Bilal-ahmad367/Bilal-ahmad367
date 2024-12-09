@@ -3,18 +3,8 @@ const { request } = useApiService();
 
 export const AddHotel = async (formData) => {
   try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("No token found");
-    }
 
-    console.log("Sending user data:", formData); // Debugging user data
-
-    const response = await request("/hotels/addhotel", "POST", formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await request("/hotels/addhotel", "POST", formData );
 
     console.log("Hotel added successfully:", response);
     return response;
@@ -28,16 +18,8 @@ export const AddHotel = async (formData) => {
 // Function to get all hotels
 export const getAllHotels = async () => {
   try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("No token found");
-    }
 
-    const response = await request("/hotels/user-hotels", "GET", null, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await request("/hotels/user-hotels", "GET");
 
     // Ensure the backend response is in the correct format
     console.log("Hotels fetched successfully:", response);

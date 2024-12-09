@@ -5,17 +5,23 @@
     >
       <div class="bg-white dark:bg-[#0e1726] h-full">
         <div class="flex justify-between items-center px-4 py-3">
-          <router-link to="/" class="main-logo flex items-center shrink-0">
-            <img
-              class="w-8 ml-[5px] flex-none"
-              src="/assets/images/logo.svg"
-              alt=""
-            />
+          <li class="main-logo flex items-center shrink-0">
+            <!-- Dynamically load hotel logo -->
+            <div>
+              <img
+                v-if="hotel?.logoUrl"
+                :src="hotel.logoUrl"
+                alt="Hotel Logo"
+                class="w-8 ml-[5px] flex-none"
+              />
+            </div>
+            <!-- Dynamically load hotel name -->
             <span
               class="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light"
-              >VRISTO</span
             >
-          </router-link>
+              {{ hotel?.hotelname || "VRISTO" }}
+            </span>
+          </li>
           <a
             href="javascript:;"
             class="collapse-icon w-8 h-8 rounded-full flex items-center hover:bg-gray-500/10 dark:hover:bg-dark-light/10 dark:text-white-light transition duration-300 rtl:rotate-180 hover:text-primary"
@@ -64,16 +70,27 @@
               <vue-collapsible :isOpen="activeDropdown === 'dashboard'">
                 <ul class="sub-menu text-gray-500">
                   <li>
-                    <router-link to="/add-hotel" @click="toggleMobileMenu">{{
-                      $t("add hotel")
-                    }}</router-link>
+                    <router-link
+                      :to="`/hotel-dashboard/add-item`"
+                      @click="toggleMobileMenu"
+                    >
+                      {{ $t("add item") }}
+                    </router-link>
                   </li>
                   <li>
-                    <router-link to="/all-hotels" @click="toggleMobileMenu">{{
-                      $t("All hotels")
-                    }}</router-link>
+                    <router-link
+                      to="/hotel-dashboard/list-items"
+                      @click="toggleMobileMenu"
+                      >{{ $t("list items") }}</router-link
+                    >
                   </li>
-                 
+                  <li>
+                    <router-link
+                      to="/hotel-dashboard/orders"
+                      @click="toggleMobileMenu"
+                      >{{ $t("orders") }}</router-link
+                    >
+                  </li>
                 </ul>
               </vue-collapsible>
             </li>
@@ -85,20 +102,35 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+
+import { ref, onMounted, computed, watch } from "vue";
 
 import { useAppStore } from "@/core/store/index";
 import VueCollapsible from "vue-height-collapsible/vue3";
 
-    import IconCaretDown from '@/core/components/icon/icon-caret-down.vue';
-import IconCaretsDown from "@/core/components/icon/icon-carets-down.vue";
+import IconCaretDown from "@/core/components/icon/icon-caret-down.vue";
 import IconMenuDashboard from "@/core/components/icon/menu/icon-menu-dashboard.vue";
-
+import { useStore } from "vuex";
 const store = useAppStore();
+const vuexStore = useStore();
 const activeDropdown: any = ref("");
 const subActive: any = ref("");
 
+const hotelId = localStorage.getItem('hotelId')
+const hotel = computed(() => vuexStore.getters["hotel/hotel"]); // Access hotel data from Vuex
+
+// Actions
+const getHotelById = (id) => {
+  vuexStore.dispatch("hotel/getHotelById").catch((error) => {
+    console.error("Failed to fetch hotel data:", error);
+  });
+};
 onMounted(() => {
+   console.log('hotelId passed to sidebar:', hotelId); 
+  if (hotelId) {
+    getHotelById(hotelId);
+  }
+
   const selector = document.querySelector(
     '.sidebar ul a[href="' + window.location.pathname + '"]'
   );

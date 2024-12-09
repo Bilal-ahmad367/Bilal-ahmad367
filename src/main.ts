@@ -35,4 +35,8 @@ app.use(i18n);
 import Popper from 'vue3-popper';
 app.component('Popper', Popper);
 
+//store
+import store from './modules/store/index';
+app.use(store);
+
 app.mount('#app');

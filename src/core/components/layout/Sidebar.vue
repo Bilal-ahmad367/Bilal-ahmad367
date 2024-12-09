@@ -5,7 +5,7 @@
     >
       <div class="bg-white dark:bg-[#0e1726] h-full">
         <div class="flex justify-between items-center px-4 py-3">
-          <router-link to="/" class="main-logo flex items-center shrink-0">
+          <router-link to="/dashboard" class="main-logo flex items-center shrink-0">
             <img
               class="w-8 ml-[5px] flex-none"
               src="/assets/images/logo.svg"
@@ -47,11 +47,14 @@
                   <icon-menu-dashboard
                     class="group-hover:!text-primary shrink-0"
                   />
-                  <span
+                   <router-link to="/dashboard" >
+                    <span
                     class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark"
                   >
                     {{ $t("dashboard") }}
                   </span>
+                   </router-link>
+                 
                 </div>
                 <div
                   :class="{
@@ -62,7 +65,28 @@
                 </div>
               </button>
               <vue-collapsible :isOpen="activeDropdown === 'dashboard'">
-                <ul class="sub-menu text-gray-500">
+          
+               
+              </vue-collapsible>
+            </li>
+             <li class="menu nav-item">
+                            <button
+                                type="button"
+                                class="nav-link group w-full"
+                                :class="{ active: activeDropdown === 'Hotels' }"
+                                @click="activeDropdown === 'Hotels' ? (activeDropdown = null) : (activeDropdown = 'Hotels')"
+                            >
+                                <div class="flex items-center">
+                                    <icon-menu-dashboard class="group-hover:!text-primary shrink-0" />
+
+                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{{ $t('Hotels') }}</span>
+                                </div>
+                                <div :class="{ 'rtl:rotate-90 -rotate-90': activeDropdown !== 'Hotels' }">
+                                    <icon-caret-down />
+                                </div>
+                            </button>
+                            <vue-collapsible :isOpen="activeDropdown === 'Hotels'">
+                                      <ul class="sub-menu text-gray-500">
                   <li>
                     <router-link to="/add-hotel" @click="toggleMobileMenu">{{
                       $t("add hotel")
@@ -74,9 +98,11 @@
                     }}</router-link>
                   </li>
                  
+
+                 
                 </ul>
-              </vue-collapsible>
-            </li>
+                            </vue-collapsible>
+                        </li>
           </ul>
         </perfect-scrollbar>
       </div>
@@ -91,7 +117,6 @@ import { useAppStore } from "@/core/store/index";
 import VueCollapsible from "vue-height-collapsible/vue3";
 
     import IconCaretDown from '@/core/components/icon/icon-caret-down.vue';
-import IconCaretsDown from "@/core/components/icon/icon-carets-down.vue";
 import IconMenuDashboard from "@/core/components/icon/menu/icon-menu-dashboard.vue";
 
 const store = useAppStore();

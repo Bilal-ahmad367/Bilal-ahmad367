@@ -58,7 +58,7 @@
 
             <div class="main-content flex flex-col min-h-screen">
                 <!--  BEGIN TOP NAVBAR  -->
-                <Header />
+                <Header  />
                 <!--  END TOP NAVBAR  -->
 
                 <!--  BEGIN CONTENT AREA  -->
@@ -76,6 +76,10 @@
 </template>
 <script setup lang="ts">
 
+import { useRoute } from 'vue-router';
+const route = useRoute();
+
+
     import { ref, onMounted } from 'vue';
 
     import sidebar from '@/core/components/layout/hotelsidebar.vue';
@@ -88,6 +92,7 @@
     const store = useAppStore();
     const showTopButton = ref(false);
     onMounted(() => {
+
         window.onscroll = () => {
             if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
                 showTopButton.value = true;

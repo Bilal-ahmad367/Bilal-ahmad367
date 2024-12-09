@@ -1,3 +1,4 @@
+
 <template>
     <div>
         <div class="absolute inset-0">
@@ -173,6 +174,9 @@
     import { useRouter } from 'vue-router';
     import { useMeta } from '@/core/composables/use-meta';
 
+   
+import IconLockDots from "@/core/components/icon/icon-lock-dots.vue";
+import IconMail from "@/core/components/icon/icon-mail.vue";
     import IconCaretDown from '@/core/components/icon/icon-caret-down.vue';
     import IconInstagram from '@/core/components/icon/icon-instagram.vue';
     import IconFacebookCircle from '@/core/components/icon/icon-facebook-circle.vue';

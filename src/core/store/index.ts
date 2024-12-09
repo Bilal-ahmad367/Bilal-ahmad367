@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import i18n from '@/i18n';
 import appSetting from '@/app-setting';
 
+import { AuthData } from '../utils/types';
 export const useAppStore = defineStore('app', {
     state: () => ({
         isDarkMode: false,
@@ -34,11 +35,24 @@ export const useAppStore = defineStore('app', {
         ],
         isShowMainLoader: true,
         semidark: false,
-        isAuthenticated:false
+
+        
+        // Auth
+        token: '',
+        isAuthenticated: false,
     }),
 
     actions: {
-       
+         
+
+  setAuth(payload: AuthData) {
+            this.token = payload.token;
+        },
+        setIsAuthenticated(payload: boolean) {
+            this.isAuthenticated = payload;
+        },
+
+
         setMainLayout(payload: any = null) {
             // Set layout based on provided payload
             if (['app', 'auth', 'hotel'].includes(payload)) {
@@ -47,9 +61,6 @@ export const useAppStore = defineStore('app', {
                 this.mainLayout = 'app'; // default to 'app' layout
             }
         },
-        // setMainLayout(payload: any = null) {
-        //     this.mainLayout = payload; //app , auth
-        // },
         toggleTheme(payload: any = null) {
             payload = payload || this.theme; // light|dark|system
             localStorage.setItem('theme', payload);
