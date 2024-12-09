@@ -1,38 +1,38 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import appSetting from '@/app-setting';
-import { useAppStore } from '@/core/store'; // This is your Pinia store
-import { authRoutes, appRoutes, hotelRoutes } from './routes';
-import vuexStore from '@/modules/store'; // Import Vuex store for auth
+import { useAppStore } from '@/core/store';
+import { authRoutes, appRoutes } from './routes';
 
-const routes: RouteRecordRaw[] = [...authRoutes, ...appRoutes, ...hotelRoutes];
+const routes: RouteRecordRaw[] = [...authRoutes, ...appRoutes];
 
 const router = createRouter({
     history: createWebHistory(),
     linkExactActiveClass: 'active',
     routes,
     scrollBehavior(to, from, savedPosition) {
-        return savedPosition ? savedPosition : { left: 0, top: 0 };
+        if (savedPosition) {
+            return savedPosition;
+        } else {
+            return { left: 0, top: 0 };
+        }
     },
 });
 
 router.beforeEach((to, from, next) => {
-    // Use Pinia for layout settings
-    const piniaStore = useAppStore();
-    
+    const store = useAppStore();
+
     if (to.meta.layout === 'auth') {
-        piniaStore.setMainLayout('auth');
-    } else if (to.meta.layout === 'hotel') {
-        piniaStore.setMainLayout('hotel');
+        store.setMainLayout('auth');
     } else {
-        piniaStore.setMainLayout('app');
+        store.setMainLayout('app');
     }
 
-    // // Authentication check using Vuex
-    // if (to.meta.requiresAuth && !vuexStore.getters['auth/isAuthenticated']) {
-    //     return next({ name: 'login' }); // Redirect to login if not authenticated
-    // }
+    // Authentication check
+    if (to.meta.requiresAuth && !store.isAuthenticated) {
+        return next({ name: 'login' });
+    }
 
-    next(); // Proceed to route if authenticated or if no auth required
+    next();
 });
 
 router.afterEach(() => {

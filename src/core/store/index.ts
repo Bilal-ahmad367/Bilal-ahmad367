@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import i18n from '@/i18n';
 import appSetting from '@/app-setting';
 
-import { AuthData } from '../utils/types';
 export const useAppStore = defineStore('app', {
     state: () => ({
         isDarkMode: false,
@@ -36,30 +35,18 @@ export const useAppStore = defineStore('app', {
         isShowMainLoader: true,
         semidark: false,
 
+        // isAuthenticated: false
+        isAuthenticated: localStorage.getItem('token') !== null , 
         
-        // Auth
-        token: '',
-        isAuthenticated: false,
     }),
 
     actions: {
-         
 
-  setAuth(payload: AuthData) {
-            this.token = payload.token;
-        },
         setIsAuthenticated(payload: boolean) {
-            this.isAuthenticated = payload;
+            this.isAuthenticated = payload
         },
-
-
         setMainLayout(payload: any = null) {
-            // Set layout based on provided payload
-            if (['app', 'auth', 'hotel'].includes(payload)) {
-                this.mainLayout = payload;
-            } else {
-                this.mainLayout = 'app'; // default to 'app' layout
-            }
+            this.mainLayout = payload; //app , auth
         },
         toggleTheme(payload: any = null) {
             payload = payload || this.theme; // light|dark|system
@@ -122,7 +109,7 @@ export const useAppStore = defineStore('app', {
             i18n.global.locale.value = payload;
             localStorage.setItem('i18n_locale', payload);
             this.locale = payload;
-            if(this.locale?.toLowerCase() === 'ae') {
+            if (this.locale?.toLowerCase() === 'ae') {
                 this.toggleRTL('rtl');
             } else {
                 this.toggleRTL('ltr');

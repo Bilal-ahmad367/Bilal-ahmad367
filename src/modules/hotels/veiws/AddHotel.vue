@@ -1,5 +1,5 @@
 <template>
-  <form class="space-y-5 dark:text-white w-[40vw] m-auto">
+  <form class="space-y-5 dark:text-white  m-auto panel">
     <!-- File Upload Section -->
     <div class="custom-file-container" data-upload-id="myFirstImage">
       <div class="label-container">
@@ -16,7 +16,7 @@
         <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
         <span class="custom-file-container__custom-file__custom-file-control ltr:pr-20 rtl:pl-20"></span>
       </label>
-      <div class="custom-file-container__image-preview"></div>
+      <div  class="custom-file-container__image-preview"></div>
     </div>
 
     <!-- Hotel Name Input -->
@@ -81,8 +81,7 @@ import FileUploadWithPreview from "file-upload-with-preview";
 import "file-upload-with-preview/dist/file-upload-with-preview.min.css";
 import "@/assets/css/file-upload-preview.css";
 
-import { AddHotel } from '@/modules/main/composables/useauth';
-import axios from "axios";
+// import { AddHotel } from '@/modules/main/composables/useauth';
 import { useRouter } from "vue-router";
 
 // Fields
@@ -100,10 +99,6 @@ const $v = useVuelidate(rules, { hotelName, location });
 // UI state
 const loader = ref(false);
 const errorMessage = ref<string | null>(null);
-
-// Token (assumed to be saved in localStorage, or you can get it from your authentication state)
-const token = localStorage.getItem("token");
-
 // Initialize file upload preview
 onMounted(() => {
   new FileUploadWithPreview("myFirstImage", {
@@ -154,8 +149,8 @@ const Addhotel = async () => {
 
   try {
     // Make the API request
-    let response = await AddHotel(formData);
-    console.log("API Response:", response);  // Log the API response
+    // let response = await AddHotel(formData);
+    // console.log("API Response:", response);  // Log the API response
 
     // Handle success based on response
       hotelName.value = '';

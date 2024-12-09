@@ -4,17 +4,14 @@
       class="sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300"
     >
       <div class="bg-white dark:bg-[#0e1726] h-full">
-        <div class="flex justify-between items-center px-4 py-3">
-          <router-link to="/dashboard" class="main-logo flex items-center shrink-0">
-            <img
-              class="w-8 ml-[5px] flex-none"
-              src="/assets/images/logo.svg"
+        <div class="flex justify-between items-center px-4">
+          <router-link to="/" class="main-logo flex items-center shrink-0">
+            <img 
+              class="w-32 ml-[4px] flex-none"
+              src="/assets/images/optimus-logo.png"
               alt=""
             />
-            <span
-              class="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light"
-              >VRISTO</span
-            >
+            <!-- <span class="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">VRISTO</span> -->
           </router-link>
           <a
             href="javascript:;"
@@ -35,74 +32,77 @@
             <li class="menu nav-item">
               <button
                 type="button"
-                class="nav-link group w-full"
-                :class="{ active: activeDropdown === 'dashboard' }"
-                @click="
-                  activeDropdown === 'dashboard'
-                    ? (activeDropdown = null)
-                    : (activeDropdown = 'dashboard')
-                "
+                class="nav-link group w-full cursor-pointer"
+                @click="router.push('/')"
               >
                 <div class="flex items-center">
                   <icon-menu-dashboard
                     class="group-hover:!text-primary shrink-0"
                   />
-                   <router-link to="/dashboard" >
-                    <span
+                  <span
                     class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark"
                   >
-                    {{ $t("dashboard") }}
+                    {{ $t("Dashboard") }}
                   </span>
-                   </router-link>
-                 
+                </div>
+                <!-- <div :class="{ 'rtl:rotate-90 -rotate-90': activeDropdown !== 'dashboard' }">
+                                    <icon-caret-down />
+                                </div> -->
+              </button>
+            </li>
+
+            <li class="menu nav-item">
+              <button
+                type="button"
+                class="nav-link group w-full"
+                :class="{ active: activeDropdown === 'hotel' }"
+                @click="
+                  activeDropdown === 'hotel'
+                    ? (activeDropdown = null)
+                    : (activeDropdown = 'hotel')
+                "
+              >
+                <div class="flex items-center">
+                  <iconproperty class="group-hover:!text-primary shrink-0" />
+
+                  <span
+                    class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark"
+                    >{{ $t("hotel") }}</span
+                  >
                 </div>
                 <div
                   :class="{
-                    'rtl:rotate-90 -rotate-90': activeDropdown !== 'dashboard',
+                    'rtl:rotate-90 -rotate-90': activeDropdown !== 'hotel',
                   }"
                 >
                   <icon-caret-down />
                 </div>
               </button>
-              <vue-collapsible :isOpen="activeDropdown === 'dashboard'">
-          
-               
-              </vue-collapsible>
-            </li>
-             <li class="menu nav-item">
-                            <button
-                                type="button"
-                                class="nav-link group w-full"
-                                :class="{ active: activeDropdown === 'Hotels' }"
-                                @click="activeDropdown === 'Hotels' ? (activeDropdown = null) : (activeDropdown = 'Hotels')"
-                            >
-                                <div class="flex items-center">
-                                    <icon-menu-dashboard class="group-hover:!text-primary shrink-0" />
+              <vue-collapsible :isOpen="activeDropdown === 'hotel'">
+                <ul class="sub-menu text-gray-500">
+                  <li>
+                    <router-link
+                      to="/hotel/add-hotel"
+                      @click="toggleMobileMenu"
+                      >{{ $t("Add hotel") }}</router-link
+                    >
+                  </li>
 
-                                    <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{{ $t('Hotels') }}</span>
-                                </div>
-                                <div :class="{ 'rtl:rotate-90 -rotate-90': activeDropdown !== 'Hotels' }">
-                                    <icon-caret-down />
-                                </div>
-                            </button>
-                            <vue-collapsible :isOpen="activeDropdown === 'Hotels'">
-                                      <ul class="sub-menu text-gray-500">
                   <li>
-                    <router-link to="/add-hotel" @click="toggleMobileMenu">{{
-                      $t("add hotel")
-                    }}</router-link>
+                    <router-link
+                      to="/hotel/all-hotels"
+                      @click="toggleMobileMenu"
+                      class="flex items-center space-x-2 group"
+                    >
+                      <span>{{ $t("All hotels") }}</span>
+                    </router-link>
                   </li>
-                  <li>
-                    <router-link to="/all-hotels" @click="toggleMobileMenu">{{
-                      $t("All hotels")
-                    }}</router-link>
-                  </li>
-                 
 
                  
                 </ul>
-                            </vue-collapsible>
-                        </li>
+              </vue-collapsible>
+            </li>
+
           </ul>
         </perfect-scrollbar>
       </div>
@@ -112,16 +112,16 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
-
 import { useAppStore } from "@/core/store/index";
 import VueCollapsible from "vue-height-collapsible/vue3";
-
-    import IconCaretDown from '@/core/components/icon/icon-caret-down.vue';
+import IconCaretsDown from "@/core/components/icon/icon-carets-down.vue";
+import iconproperty from "@/core/components/icon/property.vue";
 import IconMenuDashboard from "@/core/components/icon/menu/icon-menu-dashboard.vue";
+import IconCaretDown from "@/core/components/icon/icon-caret-down.vue";
+import router from "@/router";
 
 const store = useAppStore();
 const activeDropdown: any = ref("");
-const subActive: any = ref("");
 
 onMounted(() => {
   const selector = document.querySelector(

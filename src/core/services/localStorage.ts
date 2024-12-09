@@ -1,9 +1,8 @@
-import { AuthData } from '@/core/utils/types';
 import { useAppStore } from '@/core/store';
 
 const store = useAppStore();
 
-export const setLocalStorage = (data: AuthData) => {
+export const setLocalStorage = (data: any) => {
     localStorage.setItem('token', data.token);
     store.setIsAuthenticated(true);
 };
