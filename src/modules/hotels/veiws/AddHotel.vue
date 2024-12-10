@@ -1,71 +1,62 @@
 <template>
   <form class="space-y-5 dark:text-white  m-auto panel">
-    <!-- File Upload Section -->
-    <div class="custom-file-container" data-upload-id="myFirstImage">
-      <div class="label-container">
-        <label>Upload your logo</label>
-        <a href="javascript:;" class="custom-file-container__image-clear" title="Clear Image" @click.prevent="clearLogo">×</a>
-      </div>
-      <label class="custom-file-container__custom-file">
-        <input
-          type="file"
-          class="custom-file-container__custom-file__custom-file-input"
-          accept="image/*"
-          @change="handleFileUpload"
-        />
-        <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
-        <span class="custom-file-container__custom-file__custom-file-control ltr:pr-20 rtl:pl-20"></span>
-      </label>
-      <div  class="custom-file-container__image-preview"></div>
-    </div>
-
-    <!-- Hotel Name Input -->
-    <div>
-      <label for="hotelName">Hotel Name</label>
+    <h1 class="text-center text-3xl font-bold text-indigo-700 mt-5 flex flex-col justify-center items-center">
+      <span class="inline-block">
+        <hotel />
+      </span>
+      <span class="mt-3">Add Your Hotel</span>
+    </h1>
+    <!-- Photo Upload Field -->
+    <div class="mb-3" :class="{
+      'has-error': $v.logoFile.$error,
+      'has-success': hoteldatavalidation && !$v.logoFile.$error,
+    }">
+      <label for="Photo">{{ $t("Upload logo ") }}</label>
       <div class="relative text-white-dark">
-        <input
-          v-model="hotelName"
-          id="hotelName"
-          type="text"
-          placeholder="Enter Hotel Name"
-          class="form-input ps-10 placeholder:text-white-dark"
-          :class="{ 'border-red-500': $v.hotelName.$error }"
-        />
-        <span class="absolute start-4 top-1/2 -translate-y-1/2">
-          <icon-mail :fill="true" />
+        <input id="Photo" type="file" accept="image/*" @change="handleFileUpload"
+          class="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary" />
+        <span v-if="!$v.logoFile.$pending && $v.logoFile.$error" class="text-red-500 text-sm">
+          Only JPEG or PNG files are allowed.
         </span>
       </div>
-      <span v-if="$v.hotelName.$error" class="text-red-500 text-sm">Hotel Name is required</span>
+    </div>
+    <!-- Hotel Name Input -->
+    <div class="mb-3" :class="{
+      'has-error': $v.hotelName.$error,
+      'has-success': hoteldatavalidation && !$v.hotelName.$error,
+    }">
+      <label for="hotelName">Hotel Name</label>
+      <div class="relative text-white-dark">
+        <input v-model="hotelName" id="hotelName" type="text" placeholder="Enter Hotel Name"
+          class="form-input ps-10 placeholder:text-white-dark" :class="{ 'border-red-500': $v.hotelName.$error }" />
+        <span class="absolute start-4 top-1/2 -translate-y-1/2">
+          <add_hotel :fill="true" />
+        </span>
+      </div>
+      <span v-if="$v.hotelName.$error" class="text-red-500 text-sm">and must b eat least 4 character</span>
     </div>
 
     <!-- Location Input -->
-    <div>
+    <div class="mb-3" :class="{
+      'has-error': $v.location.$error,
+      'has-success': hoteldatavalidation && !$v.location.$error,
+    }">
       <label for="location">Location</label>
       <div class="relative text-white-dark">
-        <input
-          v-model="location"
-          id="location"
-          type="text"
-          placeholder="Enter location"
-          class="form-input ps-10 placeholder:text-white-dark"
-          :class="{ 'border-red-500': $v.location.$error }"
-        />
+        <input v-model="location" id="location" type="text" placeholder="Enter location"
+          class="form-input ps-10 placeholder:text-white-dark" :class="{ 'border-red-500': $v.location.$error }" />
         <span class="absolute start-4 top-1/2 -translate-y-1/2">
-          <icon-lock-dots :fill="true" />
+          <Location :fill="true" />
         </span>
       </div>
-      <span v-if="$v.location.$error" class="text-red-500 text-sm">Location is required</span>
+      <span v-if="$v.location.$error" class="text-red-500 text-sm">Location is required and must b eat least 4
+        character</span>
     </div>
 
     <!-- Submit Button -->
-    <button
-      type="button"
-      @click="Addhotel"
-      class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
-      :disabled="loader"
-    >
-      <span v-if="loader">Loading...</span>
-      <span v-else>Add hotel</span>
+    <button type="button" @click="Addhotel"
+      class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+      <span>Add hotel</span>
     </button>
 
     <!-- Error Message -->
@@ -74,111 +65,111 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
-import useVuelidate from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
-import FileUploadWithPreview from "file-upload-with-preview";
-import "file-upload-with-preview/dist/file-upload-with-preview.min.css";
-import "@/assets/css/file-upload-preview.css";
+  import { ref } from "vue";
+  import useVuelidate from "@vuelidate/core";
+  import { minLength, required } from "@vuelidate/validators";
 
-// import { AddHotel } from '@/modules/main/composables/useauth';
-import { useRouter } from "vue-router";
+  import Swal from "sweetalert2";
+  import { useAppStore } from "@/core/store";
+  const store = useAppStore();
+  import { AddHotel } from '@/modules/hotels/composables/useHotel';
+  import { useRouter } from "vue-router";
+  import add_hotel from '@/core/components/icon/icon-plus.vue'
+  import Location from '@/core/components/icon/icon-location.vue'
+  import hotel from '@/core/components/icon/icon-Hotel.vue'
 
-// Fields
-const hotelName = ref("");
-const location = ref("");
-const logoFile = ref<File | null>(null);
+  // Fields
+  const hoteldatavalidation = ref(false)
+  const hotelName = ref("");
+  const location = ref("");
+  const logoFile = ref<File | null>(null);
 
-// Vuelidate setup
-const rules = {
-  hotelName: { required },
-  location: { required },
-};
-const $v = useVuelidate(rules, { hotelName, location });
 
-// UI state
-const loader = ref(false);
-const errorMessage = ref<string | null>(null);
-// Initialize file upload preview
-onMounted(() => {
-  new FileUploadWithPreview("myFirstImage", {
-    images: {
-      baseImage: "/assets/images/file-preview.svg",
-      backgroundImage: "",
-    },
-  });
-});
+  // Custom validator for file type
+  const fileType = (file: File | null) => {
+    if (!file) return true; // If no file is selected, it's valid
+    const validTypes = ['image/jpeg', 'image/png']; // Allowed MIME types
+    return validTypes.includes(file.type);
+  };
+  // Vuelidate setup
+  const rules = {
+    hotelName: { required, minLength: minLength(4) },
+    location: { required, minLength: minLength(4) },
+    logoFile: { required, fileType }
+  };
+  const $v = useVuelidate(rules, { hotelName, location, logoFile });
 
-// Handle file upload
-const handleFileUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const files = target.files;
-  if (files && files[0]) {
-    logoFile.value = files[0];
-    console.log("Selected file:", logoFile.value); // Debug: check the file is set
-  }
-};
+  // UI state
 
-// Clear the logo field
-const clearLogo = () => {
-  logoFile.value = null;
-  const fileInput = document.querySelector("input[type='file']") as HTMLInputElement;
-  if (fileInput) fileInput.value = '';  // Clear the file input field
-};
+  const errorMessage = ref<string | null>(null);
+
+
+  // Handle file upload
+  const handleFileUpload = (event: Event) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      logoFile.value = file; // Update the data property
+      $v.value.logoFile.$touch();
+    } else {
+      console.error("No file selected.");
+    }
+
+  };
+
+  //sweet alert
+  const showMessage = (msg = "", type = "success") => {
+    const toast: any = Swal.mixin({
+      toast: true,
+      position: "top",
+      showConfirmButton: false,
+      timer: 3000,
+      customClass: { container: "toast" },
+    });
+    toast.fire({
+      icon: type,
+      title: msg,
+      padding: "10px 20px",
+    });
+  };
+
 
   const router = useRouter();
-// Add hotel function
-const Addhotel = async () => {
-  loader.value=true;
-  $v.value.$touch(); // Trigger validation messages
-  if ($v.value.$invalid) {
-    console.warn("Validation failed.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("hotelname", hotelName.value);
-  formData.append("location", location.value);
-  if (logoFile.value) {
-    formData.append("logo", logoFile.value);  // Attach the logo file if present
-  }
-
-  // Set loading state and clear previous error message
-  loader.value = true;
-  errorMessage.value = null;
-
-  try {
-    // Make the API request
-    // let response = await AddHotel(formData);
-    // console.log("API Response:", response);  // Log the API response
-
-    // Handle success based on response
-      hotelName.value = '';
-      location.value = '';
-      logoFile.value = null; 
-      $v.value.$reset(); 
-      alert("Hotel added successfully!");
-
-     router.push('/all-hotels')
-   
-  } catch (err: any) {
-    // Detailed error logging
-    console.error("Error:", err);
-    console.error("Error response:", err.response);
-    console.error("Error message:", err.message);
-
-    // Set error message based on the error response structure
-    if (err.response && err.response.data && err.response.data.message) {
-      errorMessage.value = err.response.data.message;
-    } else {
-      errorMessage.value = "Request failed. Please try again.";
+  const Addhotel = async () => {
+    hoteldatavalidation.value = true;
+    $v.value.$touch(); // Trigger validation messages
+    if ($v.value.$invalid) {
+      console.warn("Validation failed.");
+      return;
     }
-  } finally {
-    loader.value = false;  // Reset loading state
-  }
-};
+
+    const formData = new FormData();
+    formData.append("hotelname", hotelName.value);
+    formData.append("location", location.value);
+
+    if (logoFile.value) {
+      console.log("Appending logo file:", logoFile.value.name, logoFile.value.size);
+      formData.append("logo", logoFile.value);
+    } else {
+      console.warn("No logo file selected.");
+    }
+
+
+    try {
+      store.isShowMainLoader = true;
+      const response = await AddHotel(formData);
+      showMessage("Hotel added successfully!");
+      router.push('/hotel/all-hotels');
+    } catch (err: any) {
+      console.error("Error:", err);
+      errorMessage.value = err.response?.data?.message || "Request failed. Please try again.";
+    } finally {
+      store.isShowMainLoader = false;
+    }
+  };
+
 </script>
 
 <style scoped>
-/* Your custom styles for the component */
+  /* Your custom styles for the component */
 </style>

@@ -4,6 +4,7 @@ const store = useAppStore();
 
 export const setLocalStorage = (data: any) => {
     localStorage.setItem('token', data.token);
+    // localStorage.setItem('userD', JSON.stringify(data.permissions));
     store.setIsAuthenticated(true);
 };
 
