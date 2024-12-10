@@ -21,7 +21,6 @@
     // meta
     useMeta({ title: 'Sales Admin' });
     store.setMainLayout('auth');
-    console.log('store.mainLayout', store.mainLayout);
 
     const mainLayout = computed(() => {
         return store.mainLayout === 'auth' ? authLayout : appLayout;

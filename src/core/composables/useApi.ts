@@ -1,13 +1,13 @@
 import { AxiosRequestConfig } from 'axios';
-import apiClient from '@/core/utils/apiClient';
+import apiClient from '@/core/services/apiClient';
 import { ref } from 'vue';
 
-export function useApiService() {
+export function useApi() {
     const loading = ref(false);
     const error = ref<string | null>(null);
     const baseUrl = import.meta.env.VITE_API_URL;
     
-    const request = async <T>(url: string, method: 'GET' | 'POST' = 'GET',  data: any = null, config: AxiosRequestConfig = {}) => {
+    const request = async <T>(url: string, method: 'GET' | 'POST' = 'GET', data: any = null, config: AxiosRequestConfig = {}) => {
         loading.value = true;
         error.value = null;
 
@@ -15,7 +15,6 @@ export function useApiService() {
             const response = await apiClient({
                 url: `${baseUrl}${url}`,
                 method,
-               
                 data,
                 ...config
             });
