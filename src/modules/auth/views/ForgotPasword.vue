@@ -126,100 +126,53 @@
               </Popper>
             </div>
           </div>
-
+          <!--  -->
+          <!--  -->
+          <!--  -->
+          <!-- Forgot Password Page -->
           <div class="w-full max-w-[440px] lg:mt-16">
             <div class="mb-7">
-              <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">
-                Reset Password
+              <h1 class="mb-3 text-3xl font-bold !leading-snug dark:text-white">
+                Forgot password
               </h1>
-              <p>Enter the code sent to your email and update your password.</p>
+              <p>Enter your email to recover your ID</p>
             </div>
-
-            <form class="space-y-5" @submit.prevent="resetPassword()">
-              <!-- Code Field -->
-              <div
-                :class="{
-                  'has-error': $v.form.token.$error,
-                  'has-success': isresetpassword && !$v.form.token.$error,
-                }"
-              >
-                <label for="token">Code</label>
+            <form class="space-y-5" @submit.prevent="forgotPassword">
+              <div>
+                <label for="Email">Email</label>
                 <div class="relative text-white-dark">
                   <input
-                    id="token"
-                    type="text"
-                    placeholder="Enter your code"
+                    v-model="email"
+                    id="Email"
+                    type="email"
+                    placeholder="Enter Email"
                     class="form-input pl-10 placeholder:text-white-dark"
-                    v-model.trim="$v.form.token.$model"
                   />
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2">
+                    <icon-mail :fill="true" />
+                  </span>
                 </div>
-
-                <template v-if="isresetpassword && $v.form.token.$error">
-                  <p class="text-danger mt-1">please fill the field</p>
+                <template class="text-red-500 mt-1" v-if="emailError">
+                  {{ emailError }}
                 </template>
               </div>
-
-              <!-- New Password Field -->
-              <div
-                :class="{
-                  'has-error': $v.form.newPassword.$error,
-                  'has-success': isresetpassword && !$v.form.newPassword.$error,
-                }"
-              >
-                <label for="newPassword">New Password</label>
-                <div class="relative text-white-dark">
-                  <input
-                    id="newPassword"
-                    type="password"
-                    placeholder="Enter new password"
-                    class="form-input pl-10 placeholder:text-white-dark"
-                    v-model.trim="$v.form.newPassword.$model"
-                  />
-                </div>
-                <template v-if="isresetpassword && $v.form.newPassword.$error">
-                  <p class="text-danger mt-1">password must be 6 characters</p>
-                </template>
-              </div>
-
-              <!-- Confirm Password Field -->
-              <div
-                :class="{
-                  'has-error': $v.form.confirmPassword.$error,
-                  'has-success':
-                    isresetpassword && !$v.form.confirmPassword.$error,
-                }"
-              >
-                <label for="confirmPassword">Confirm Password</label>
-                <div class="relative text-white-dark">
-                  <input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="Confirm new password"
-                    class="form-input pl-10 placeholder:text-white-dark"
-                    v-model.trim="$v.form.confirmPassword.$model"
-                  />
-                </div>
-                <template
-                  v-if="isresetpassword && $v.form.confirmPassword.$error"
-                >
-                  <div v-if="confirnPasswordErr">
-                    <p class="text-danger mt-1">{{ confirnPasswordErr }}</p>
-                  </div>
-
-                  <p v-else class="text-danger mt-1">
-                    password must be 6 character
-                  </p>
-                </template>
-              </div>
-
               <button
                 type="submit"
                 class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
+                :disabled="loadingState"
               >
-                Update Password
+                <span v-if="loadingState"
+                  ><LoaderIcon class="animate-spin h-5 w-5 text-white"
+                /></span>
+                <span v-else>RECOVER</span>
               </button>
             </form>
+            <loading v-if="loadingState" />
           </div>
+
+          <!--  -->
+          <!--  -->
+          <!--  -->
 
           <p class="absolute bottom-6 w-full text-center dark:text-white">
             © {{ new Date().getFullYear() }}.VRISTO All Rights Reserved.
@@ -237,9 +190,7 @@ import { useAppStore } from "@/core/store/index";
 import { useRouter } from "vue-router";
 import LoaderIcon from "@/core/components/icon/icon-loader.vue";
 import { useMeta } from "@/core/composables/use-meta";
-import { required, minLength, sameAs } from "@vuelidate/validators";
-import { resetpassword } from "../composables/useAuth";
-import { useVuelidate } from "@vuelidate/core";
+import { forget } from "../composables/useAuth";
 import axios from "axios"; // For API calls
 // import loading from "@/components/common/lazy-loading.vue"; // Lazy loading component
 
@@ -249,36 +200,9 @@ const router = useRouter();
 const store = useAppStore();
 
 // Data for email, loading state, and error messages
-
-const loadingState = ref(false);
-const isresetpassword = ref(false);
-const confirnPasswordErr = ref("");
-const form = ref({
-  token: "",
-  newPassword: "",
-  confirmPassword: "",
-});
-
-const sameAsPassword = (value: string) => {
-  if (value !== form.value.newPassword) {
-    confirnPasswordErr.value = "password not matche !";
-  }
-  return value === form.value.newPassword;
-};
-// Validation rules
-const rules = {
-  form: {
-    token: { required, minLength: minLength(3) },
-    newPassword: { required, minLength: minLength(6) },
-    confirmPassword: {
-      minLength: minLength(6),
-      required,
-      sameAsPassword,
-    },
-  },
-};
-// Initialize validation
-const $v = useVuelidate(rules, { form });
+const email = ref("");
+const emailError = ref(""); // Stores the error message if the email is not found or invalid
+const loadingState = ref(false); // Tracks the loading state
 
 // multi-language setup
 const i18n = reactive(useI18n());
@@ -292,24 +216,29 @@ const currentFlag = computed(() => {
 });
 
 // Function to handle the Forgot Password logic
-const resetPassword = async () => {
-  isresetpassword.value = true;
-  $v.value.$touch();
-  if ($v.value.$invalid) {
-    return false;
+const forgotPassword = async () => {
+  // Validation: check if email is provided
+  if (email.value === "") {
+    emailError.value = "Please enter your email.";
+    return;
   }
+
+  // Start loading
   loadingState.value = true;
 
   try {
-    let payload = {
-      token: form.value.token,
-      newPassword: form.value.newPassword,
-    };
-    let response = await resetpassword(payload);
-    router.push("/login");
+    let data = email.value;
+    // Make the API call to check if the email exists in the database and request the password reset token
+    // const response = await axios.post(
+    //   `https://propertymanagement-backend.vercel.app/api/forget-password`,
+    //   Email
+    // );
+    const response = await forget(data);
+    router.push("/reset-password");
   } catch (error) {
     console.log(error);
   } finally {
+    // Stop loading once the request is complete
     loadingState.value = false;
   }
 };

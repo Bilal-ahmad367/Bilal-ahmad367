@@ -34,22 +34,20 @@ export const useAppStore = defineStore('app', {
         ],
         isShowMainLoader: true,
         semidark: false,
-        isAuthenticated:false
+
+        // isAuthenticated: false
+        isAuthenticated: localStorage.getItem('token') !== null , 
+        
     }),
 
     actions: {
-       
-        setMainLayout(payload: any = null) {
-            // Set layout based on provided payload
-            if (['app', 'auth', 'hotel'].includes(payload)) {
-                this.mainLayout = payload;
-            } else {
-                this.mainLayout = 'app'; // default to 'app' layout
-            }
+
+        setIsAuthenticated(payload: boolean) {
+            this.isAuthenticated = payload
         },
-        // setMainLayout(payload: any = null) {
-        //     this.mainLayout = payload; //app , auth
-        // },
+        setMainLayout(payload: any = null) {
+            this.mainLayout = payload; //app , auth
+        },
         toggleTheme(payload: any = null) {
             payload = payload || this.theme; // light|dark|system
             localStorage.setItem('theme', payload);
@@ -111,7 +109,7 @@ export const useAppStore = defineStore('app', {
             i18n.global.locale.value = payload;
             localStorage.setItem('i18n_locale', payload);
             this.locale = payload;
-            if(this.locale?.toLowerCase() === 'ae') {
+            if (this.locale?.toLowerCase() === 'ae') {
                 this.toggleRTL('rtl');
             } else {
                 this.toggleRTL('ltr');
